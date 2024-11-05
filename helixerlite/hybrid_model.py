@@ -1,3 +1,6 @@
+import os
+# silence tensorflow warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import warnings
 
 with warnings.catch_warnings():
