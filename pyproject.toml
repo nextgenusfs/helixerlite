@@ -45,7 +45,7 @@ helixerlite = "helixerlite.__main__:main"
 include = [
   "helixerlite/*.py",
   "README.md",
-  "LICENSE.md",
+  "LICENSE",
   "helixerlite/model_files/*"
 ]
 exclude = [
