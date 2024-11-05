@@ -1,0 +1,56 @@
+[build-system]
+requires = ["maturin>=1,<2"]
+build-backend = "maturin"
+
+[project]
+name = "helixerlite"
+version = "24.11.04"
+description = "helixerlite: simplified genome annotation with Helixer"
+readme = {file = "README.md", content-type = "text/markdown"}
+authors = [
+    {name = "Jon Palmer", email = "nextgenusfs@gmail.com"}
+]
+requires-python = ">=3.6.0"
+dependencies = [
+    "h5py",
+    "pyfastx>=2.0.0",
+    "scikit-learn",
+    "tensorflow>=2.6.2",
+    "tensorflow-addons>=0.21.0",
+    "Keras<3.0.0",
+    "keras_layer_normalization",
+    "numpy",
+    "numcodecs",
+    "gfftk"
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Operating System :: Unix",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+keywords = ["bioinformatics", "genome", "annotation"]
+
+[project.urls]
+Homepage = "https://github.com/nextgenusfs/helixerlite"
+Repository = "https://github.com/nextgenusfs/helixerlite.git"
+
+[project.scripts]
+helixerlite = "helixerlite.__main__:main"
+
+[tool.maturin.build]
+include = [
+  "helixerlite/*.py",
+  "README.md",
+  "LICENSE.md",
+  "helixerlite/model_files/*"
+]
+exclude = [
+  "tests/*",
+]
+
+[tool.maturin]
+bindings = "pyo3"

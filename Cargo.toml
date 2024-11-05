@@ -1,0 +1,10 @@
+[package]
+name = "helixerlite"
+version = "0.1.1"
+authors = ["Tony Bolger <bolger.tony@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+hdf5 = "0.8.1"
+ndarray = "0.15.6"
+pyo3 = { version = "0.18", features = ["extension-module"] }
