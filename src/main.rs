@@ -1,4 +1,3 @@
-use pyo3::prelude::*;
 use helixer_post_bin::analysis::extractor::{BasePredictionExtractor, ComparisonExtractor};
 use helixer_post_bin::analysis::hmm::show_hmm_config;
 use helixer_post_bin::analysis::rater::SequenceRating;
@@ -11,25 +10,30 @@ use std::io::BufWriter;
 use std::path::Path;
 use std::process::exit;
 
-/// A Python function that wraps the main functionality
-#[pyfunction]
-fn run_helixer_post(
-    genome_path: &str,
-    predictions_path: &str,
-    window_size: usize,
-    edge_threshold: f64,
-    peak_threshold: f64,
-    min_coding_length: usize,
-    gff_filename: &str,
-) -> PyResult<()> {
+fn main() {
+    let arg_vec = std::env::args().collect::<Vec<_>>(); // Arg iterator into vector
+
+    if arg_vec.len() != 8 {
+        println!("HelixerPost <genome.h5> <predictions.h5> <windowSize> <edgeThresh> <peakThresh> <minCodingLength> <gff>");
+        exit(1);
+    }
+
+    let genome_path = arg_vec[1].as_str();
+    let predictions_path = arg_vec[2].as_str();
+    let window_size = arg_vec[3].parse().unwrap();
+    let edge_threshold = arg_vec[4].parse().unwrap();
+    let peak_threshold = arg_vec[5].parse().unwrap();
+    let min_coding_length = arg_vec[6].parse().unwrap();
+    let gff_filename = &arg_vec[7];
+
     let helixer_res = HelixerResults::new(predictions_path.as_ref(), genome_path.as_ref())
         .expect("Failed to open input files");
 
     let bp_extractor = BasePredictionExtractor::new_from_prediction(&helixer_res)
         .expect("Failed to open Base / ClassPrediction / PhasePrediction Datasets");
+    //let bp_extractor = BasePredictionExtractor::new_from_pseudo_predictions(&helixer_res).expect("Failed to open Base / ClassPrediction / PhasePrediction Datasets");
 
-    let comp_extractor = ComparisonExtractor::new(&helixer_res)
-        .expect("Failed to open ClassReference / PhaseReference / ClassPrediction / PhasePrediction Datasets");
+    let comp_extractor = ComparisonExtractor::new(&helixer_res).expect("Failed to open ClassReference / PhaseReference / ClassPrediction / PhasePrediction Datasets");
 
     let analyzer = Analyzer::new(
         bp_extractor,
@@ -48,6 +52,7 @@ fn run_helixer_post(
     let gff_file = File::create(gff_filename).unwrap();
     let mut gff_writer = GffWriter::new(BufWriter::new(gff_file));
 
+    // There should only ever be one species for the gff output
     assert_eq!(
         helixer_res.get_all_species().len(),
         1,
@@ -119,12 +124,4 @@ fn run_helixer_post(
     }
 
     println!("Total: {}bp across {} windows", total_length, total_count);
-    Ok(())
-}
-
-/// A module definition for PyO3
-#[pymodule]
-fn helixerlite(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(run_helixer_post, m)?)?;
-    Ok(())
 }
