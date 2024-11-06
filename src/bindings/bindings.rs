@@ -11,7 +11,7 @@ fn main_py() -> PyResult<()> {
     }
 }
 
-#[pymodule]
+#[pymodule(name = "helixerlite")]
 fn helixer_post_bin(py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(main_py, m)?)?;
     Ok(())
