@@ -1,5 +1,5 @@
 use helixer_post::main;
-usepyo3::{prelude::*, PyAny};
+use pyo3::{prelude::*, PyAny};
 
 #[pyfunction]
 fn main_py() -> PyResult<()> {
@@ -11,7 +11,7 @@ fn main_py() -> PyResult<()> {
     }
 }
 
-#[pymodule(name = "helixerlite")]
+#[init_lib(helixerlite)]
 fn helixer_post_bin(py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(main_py, m)?)?;
     Ok(())
