@@ -1,7 +1,7 @@
 pub mod analysis;
 pub mod gff;
 pub mod results;
-
+extern crate pyo3;
 
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
@@ -171,7 +171,8 @@ fn hello_world() -> PyResult<String> {
 
 // PyO3 module definition
 #[pymodule]
-fn helixerlite(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+#[pyo3(name="helixerlite")]
+pub fn init<'py>(_py: Python<'py>, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(hello_world, m)?)?;
     m.add_function(wrap_pyfunction!(run_helixer_post, m)?)?;
     Ok(())

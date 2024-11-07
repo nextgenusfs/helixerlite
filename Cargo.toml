@@ -1,19 +1,17 @@
 [package]
-name = "helixerlite"
+name = "helixerpost"
 version = "0.1.1"
 authors = ["Tony Bolger <bolger.tony@gmail.com>", "Jonathan Palmer <nextgenusfs@gmail.com>"]
-edition = "2021"
+edition = "2018"
 
 [dependencies]
-hdf5 = "0.8.1"
-ndarray = "0.15.6"
+hdf5 = { git = "https://github.com/10XGenomics/hdf5-rust.git", branch = "conda_nov2021" }
+ndarray = "0.15"
 pyo3 = { version = "0.22.6", features = ["extension-module"] }
 
 [lib]
 name = "helixerlite"
-path = "src/lib.rs"
 crate-type = ["cdylib"]
 
-[profile.release]
-lto = true
-codegen-units = 1
+[features]
+default = ["pyo3/extension-module"]
