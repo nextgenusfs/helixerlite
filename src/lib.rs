@@ -171,7 +171,7 @@ fn hello_world() -> PyResult<String> {
 
 // PyO3 module definition
 #[pymodule]
-fn helixerpost(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn helixerlite(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(hello_world, m)?)?;
     m.add_function(wrap_pyfunction!(run_helixer_post, m)?)?;
     Ok(())

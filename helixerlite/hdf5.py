@@ -116,7 +116,6 @@ class HelixerFastaToH5Controller(HelixerExportControllerBase):
         for i, (seqid, seq) in enumerate(
             pyfastx.Fasta(self.input_path, build_index=False)
         ):
-            start_time = time.time()
             coord = HelixerFastaToH5Controller.CoordinateSurrogate(seqid, seq)
             n_chunks = HelixerExportControllerBase.calc_n_chunks(
                 coord.length, chunk_size
@@ -137,5 +136,5 @@ class HelixerFastaToH5Controller(HelixerExportControllerBase):
                     first_round_for_coordinate=(j == 0),
                     compression=compression,
                 )
-        self._add_data_attrs()  # not sure this is needed, trying to avoid helixer/geenuf overhead
+        self._add_data_attrs()
         self.h5.close()

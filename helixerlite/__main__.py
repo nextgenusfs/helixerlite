@@ -12,7 +12,7 @@ from .help_formatter import MyParser, MyHelpFormatter
 from .log import startLogging, system_info, finishLogging
 from .hdf5 import HelixerFastaToH5Controller
 from .hybrid_model import HybridModel
-from .utilities import prediction2gff3, download
+from .utilities import preds2gff3, download
 
 
 def main():
@@ -108,8 +108,8 @@ def main():
     model.run()
 
     # convert to GFF3
-    logger.info("Converting predictions.h5 to GFF3 with helixer_post_bin")
-    prediction2gff3(
+    logger.info("Converting predictions.h5 to GFF3 with helixerpost")
+    preds2gff3(
         f"{slug}.h5",
         f"{slug}.predictions.h5",
         f"{slug}.gff3",

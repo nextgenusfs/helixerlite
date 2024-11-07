@@ -1,5 +1,5 @@
 [package]
-name = "helixerpost"
+name = "helixerlite"
 version = "0.1.1"
 authors = ["Tony Bolger <bolger.tony@gmail.com>", "Jonathan Palmer <nextgenusfs@gmail.com>"]
 edition = "2021"
@@ -10,5 +10,10 @@ ndarray = "0.15.6"
 pyo3 = { version = "0.22.6", features = ["extension-module"] }
 
 [lib]
-name = "helixerpost"
+name = "helixerlite"
+path = "src/lib.rs"
 crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+codegen-units = 1
