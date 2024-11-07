@@ -1743,8 +1743,9 @@ pub struct HmmStateRegion {
     start_pos: usize,
     end_pos: usize,
     annotation_label: HmmAnnotationLabel,
-
+    #[allow(dead_code)]
     trans_penalty: u64, // Transition penalty into each state in the region
+    #[allow(dead_code)]
     neg_log_prob: u64   // Negative Log probability of all bases within this region
 }
 
