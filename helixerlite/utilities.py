@@ -4,7 +4,7 @@ import os
 import errno
 import socket
 from urllib.request import urlopen
-import helixerlite
+import helixerpost
 from .__init__ import __version__
 
 
@@ -101,7 +101,7 @@ def preds2gff3(
     min_coding_length=60,
 ):
     # helixer_post_bin <genome.h5> <predictions.h5> <window_size> <edge_threshold> <peak_threshold> <min_coding_length> <output.gff3>
-    helixerlite.run_helixer_post(
+    helixerpost.run_helixer_post(
         hd_genome,
         hd_prediction,
         window_size,

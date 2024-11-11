@@ -67,7 +67,7 @@ impl<'a, TC: ArrayConvInto<ClassPrediction>, TP: ArrayConvInto<PhasePrediction>>
 
             let end_pos = start_pos + bp_vec.len();
 
-            println!("Solving a window from {} to {} (length: {})", start_pos, end_pos, bp_vec.len());
+            //println!("Solving a window from {} to {} (length: {})", start_pos, end_pos, bp_vec.len());
 
             let hmm = PredictionHmm::new(bp_vec);
             let maybe_solution = hmm.solve();
@@ -121,11 +121,11 @@ impl<'a, TC: ArrayConvInto<ClassPrediction>, TP: ArrayConvInto<PhasePrediction>>
         gff_writer: &mut GffWriter<W>,
     ) -> (usize, usize) {
         let id = seq.get_id();
-        println!(
-            "  BP_Extractor for Sequence {} - ID {}",
-            seq.get_name(),
-            id.inner()
-        );
+        //println!(
+        //    "  BP_Extractor for Sequence {} - ID {}",
+        //    seq.get_name(),
+        //    id.inner()
+        //);
 
         let mut gene_idx = 1;
 
@@ -152,11 +152,11 @@ impl<'a, TC: ArrayConvInto<ClassPrediction>, TP: ArrayConvInto<PhasePrediction>>
             gff_writer,
         );
         let fwd_seq_rating = fwd_comp_rater.calculate_stats();
-        println!(
-            "Forward for Sequence {} - ID {}",
-            seq.get_name(),
-            id.inner()
-        );
+        //println!(
+        //    "Forward for Sequence {} - ID {}",
+        //    seq.get_name(),
+        //    id.inner()
+        //);
         fwd_seq_rating.dump(self.comp_extractor.has_ref());
 
         fwd_rating.accumulate(&fwd_seq_rating);
@@ -183,11 +183,11 @@ impl<'a, TC: ArrayConvInto<ClassPrediction>, TP: ArrayConvInto<PhasePrediction>>
             gff_writer,
         );
         let rev_seq_rating = rev_comp_rater.calculate_stats();
-        println!(
-            "Reverse for Sequence {} - ID {}",
-            seq.get_name(),
-            id.inner()
-        );
+        //println!(
+        //    "Reverse for Sequence {} - ID {}",
+        //    seq.get_name(),
+        //    id.inner()
+        //);
         rev_seq_rating.dump(self.comp_extractor.has_ref());
 
         rev_rating.accumulate(&rev_seq_rating);

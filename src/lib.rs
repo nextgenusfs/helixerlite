@@ -4,9 +4,8 @@ pub mod results;
 extern crate pyo3;
 
 use pyo3::prelude::*;
-use pyo3::wrap_pyfunction;
 use analysis::extractor::{BasePredictionExtractor, ComparisonExtractor};
-use analysis::hmm::show_hmm_config;
+//use analysis::hmm::show_hmm_config;
 use analysis::rater::SequenceRating;
 use analysis::Analyzer;
 use gff::GffWriter;
@@ -16,6 +15,7 @@ use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
 //use std::process::exit;
+
 
 
 // Function that contains the logic from main.rs
@@ -29,14 +29,6 @@ pub fn helixer_post(
     gff_filename: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Implement your logic here using the existing modules
-    println!("Running HelixerPost with the following parameters:");
-    println!("Genome Path: {}", genome_path);
-    println!("Predictions Path: {}", predictions_path);
-    println!("Window Size: {}", window_size);
-    println!("Edge Threshold: {}", edge_threshold);
-    println!("Peak Threshold: {}", peak_threshold);
-    println!("Min Coding Length: {}", min_coding_length);
-    println!("GFF Filename: {}", gff_filename);
 
     let helixer_res = HelixerResults::new(predictions_path.as_ref(), genome_path.as_ref())
         .expect("Failed to open input files");
@@ -59,7 +51,7 @@ pub fn helixer_post(
     let mut total_count = 0;
     let mut total_length = 0;
 
-    show_hmm_config();
+    //show_hmm_config();
 
     let gff_file = File::create(gff_filename).unwrap();
     let mut gff_writer = GffWriter::new(BufWriter::new(gff_file));
@@ -87,11 +79,6 @@ pub fn helixer_post(
         let mut rev_species_rating = SequenceRating::new();
 
         let id = species.get_id();
-        println!(
-            "Sequences for Species {} - {}",
-            species.get_name(),
-            id.inner()
-        );
         for seq_id in helixer_res.get_sequences_for_species(id) {
             let seq = helixer_res.get_sequence_by_id(*seq_id);
             gff_writer
@@ -113,32 +100,23 @@ pub fn helixer_post(
             total_length += length;
         }
 
-        println!(
-            "Forward for Species {} - {}",
-            species.get_name(),
-            id.inner()
-        );
         fwd_species_rating.dump(analyzer.has_ref());
-
-        println!(
-            "Reverse for Species {} - {}",
-            species.get_name(),
-            id.inner()
-        );
         rev_species_rating.dump(analyzer.has_ref());
 
         let mut species_rating = SequenceRating::new();
         species_rating.accumulate(&fwd_species_rating);
         species_rating.accumulate(&rev_species_rating);
 
-        println!("Total for Species {} - {}", species.get_name(), id.inner());
         species_rating.dump(analyzer.has_ref());
     }
 
-    println!("Total: {}bp across {} windows", total_length, total_count);
-    
 
     Ok(())
+}
+
+#[pyfunction]
+fn hello_world() -> PyResult<String> {
+    Ok("Hello, world!".to_string())
 }
 
 // PyO3 function to expose to Python
@@ -163,16 +141,10 @@ fn run_helixer_post(
     ).map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("{}", e)))
 }
 
-#[pyfunction]
-fn hello_world() -> PyResult<String> {
-    Ok("Hello, world!".to_string())
-}
-
 
 // PyO3 module definition
 #[pymodule]
-#[pyo3(name="helixerlite")]
-pub fn init<'py>(_py: Python<'py>, m: &Bound<PyModule>) -> PyResult<()> {
+fn helixerpost(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(hello_world, m)?)?;
     m.add_function(wrap_pyfunction!(run_helixer_post, m)?)?;
     Ok(())

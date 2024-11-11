@@ -74,7 +74,7 @@ def main():
     # convert genome to hd5
     slug = str(uuid.uuid4())[:8]
     logger.info(
-        f"Converting genome assembly to HD5 format. Using settings for {args.lineage}: --subsequence-length {lineage_config['length']}"
+        f"Converting genome assembly to HDF5 format. Using settings for {args.lineage}: --subsequence-length {lineage_config['length']}"
     )
     fasta2hdf5(
         args.fasta, f"{slug}.h5", species=slug, subseqlen=lineage_config["length"]
@@ -113,7 +113,7 @@ def main():
         f"{slug}.h5",
         f"{slug}.predictions.h5",
         f"{slug}.gff3",
-        peak_threshold=args.peak,
+        peak_threshold=float(args.peak),
         min_coding_length=args.minprotlen,
     )
     # clean/reformat gff

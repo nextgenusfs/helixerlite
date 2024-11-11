@@ -1837,9 +1837,9 @@ impl PredictionHmmSolution {
             if eval.state.get_annotation_label() != eval.previous_state.get_annotation_label()
             // If prev state changes annotation label
             {
-                println!("Generate a standard HmmStateRegion S: {} E: {} Label: {} Trans: {} NegLog: {}",
-                         eval.start_position, region_end_pos, eval.state.get_annotation_label().to_str(),
-                         accum_trans_penalty, accum_neg_log_prob);
+                //println!("Generate a standard HmmStateRegion S: {} E: {} Label: {} Trans: {} NegLog: {}",
+                //         eval.start_position, region_end_pos, eval.state.get_annotation_label().to_str(),
+                //         accum_trans_penalty, accum_neg_log_prob);
 
                 regions.push(HmmStateRegion::new(
                     eval.start_position,
@@ -1861,9 +1861,9 @@ impl PredictionHmmSolution {
 
         // Drain accumulated intergenic region if non-zero length (almost always)
         if region_end_pos > 0 {
-            println!("Generate a starting Intergenic HmmStateRegion S: {} E: {} Label: {} Trans: {} NegLog: {}",
-                     0, region_end_pos, eval.state.get_annotation_label().to_str(),
-                     accum_trans_penalty, accum_neg_log_prob);
+            //println!("Generate a starting Intergenic HmmStateRegion S: {} E: {} Label: {} Trans: {} NegLog: {}",
+            //         0, region_end_pos, eval.state.get_annotation_label().to_str(),
+            //         accum_trans_penalty, accum_neg_log_prob);
             regions.push(HmmStateRegion::new(
                 eval.start_position,
                 region_end_pos,
@@ -1879,12 +1879,12 @@ impl PredictionHmmSolution {
     }
 
     pub fn dump(&self, position: usize) {
-        println!(
-            "Solution Penalty: {} over {} bp starting at {}",
-            self.eval.accum_penalty,
-            self.hmm.class_pred_pen.len(),
-            position
-        );
+        //println!(
+        //    "Solution Penalty: {} over {} bp starting at {}",
+        //    self.eval.accum_penalty,
+        //    self.hmm.class_pred_pen.len(),
+        //    position
+        //);
 
         let regions = self.trace_regions();
 
@@ -1896,15 +1896,15 @@ impl PredictionHmmSolution {
                 seq.push(self.hmm.bases_pen[idx].as_str());
             }
 
-            println!(
-                "{} to {} aka {} to {} is {} - {}",
-                region.start_pos,
-                region.end_pos,
-                region.start_pos + position,
-                region.end_pos + position,
-                region.annotation_label.to_str(),
-                seq
-            );
+            //println!(
+            //    "{} to {} aka {} to {} is {} - {}",
+            //    region.start_pos,
+            //    region.end_pos,
+            //    region.start_pos + position,
+            //    region.end_pos + position,
+            //    region.annotation_label.to_str(),
+            //    seq
+            //);
         }
 
         //        if position > 30000

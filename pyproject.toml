@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "helixerlite"
-version = "24.11.06"
+version = "24.11.10"
 description = "helixerlite: simplified genome annotation with Helixer"
 readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
@@ -53,4 +53,4 @@ exclude = [
 ]
 
 [tool.maturin]
-bindings = "pyo3"
+features = ["pyo3/extension-module"]

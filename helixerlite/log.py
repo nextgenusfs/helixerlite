@@ -112,7 +112,7 @@ def system_info(log):
     - None
     """
     log(
-        "Python v{}; helixerlite v{}, tensorflow v{}, h5py v{}, pyfastx v{}, gfftk v{}, numpy v{}".format(
+        "Python v{}; helixerlite v{}, Helixer v0.3.2; HelixerPost v0.1.0, tensorflow v{}, h5py v{}, pyfastx v{}, gfftk v{}, numpy v{}".format(
             platform.python_version(),
             __version__,
             tf.__version__,

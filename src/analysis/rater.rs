@@ -354,77 +354,77 @@ impl SequenceRating {
         corner_label: &str,
     ) {
         /* Confusion Matrices, two column layout */
-        print!("{:>10} Class\t", corner_label);
-        for j in 0..4 {
-            print!("{:>12}\t", Self::CLASS_NAMES[j]);
-        }
+        //print!("{:>10} Class\t", corner_label);
+        //for j in 0..4 {
+        //    print!("{:>12}\t", Self::CLASS_NAMES[j]);
+        //}
 
-        print!("\t");
+        //print!("\t");
 
-        print!("{:>10} Phase\t", corner_label);
-        for j in 0..4 {
-            print!("{:>12}\t", Self::PHASE_NAMES[j]);
-        }
+        //print!("{:>10} Phase\t", corner_label);
+        //for j in 0..4 {
+        //    print!("{:>12}\t", Self::PHASE_NAMES[j]);
+        //}
 
-        println!();
+        //println!();
 
-        for i in 0..4 {
-            print!("{:>16}\t", Self::CLASS_NAMES[i]);
-            for j in 0..4 {
-                print!("{:12}\t", class_confusion.count[i][j]);
-            }
+        //for i in 0..4 {
+        //    print!("{:>16}\t", Self::CLASS_NAMES[i]);
+        //    for j in 0..4 {
+        //        print!("{:12}\t", class_confusion.count[i][j]);
+        //    }
 
-            print!("\t");
+        //    print!("\t");
 
-            print!("{:>16}\t", Self::PHASE_NAMES[i]);
-            for j in 0..4 {
-                print!("{:12}\t", phase_confusion.count[i][j]);
-            }
+        //    print!("{:>16}\t", Self::PHASE_NAMES[i]);
+        //    for j in 0..4 {
+        //        print!("{:12}\t", phase_confusion.count[i][j]);
+        //    }
 
-            println!();
-        }
+        //    println!();
+        //}
 
-        println!();
+        //println!();
 
         /* Summaries, two column layout */
 
-        print!(
-            "{:>16}\t{:>12}\t{:>12}\t{:>12}\t{:>12}\t",
-            "", "Precision", "Recall", "F1", ""
-        );
-        print!("\t");
-        println!(
-            "{:>16}\t{:>12}\t{:>12}\t{:>12}\t{:>12}\t",
-            "", "Precision", "Recall", "F1", ""
-        );
+        //print!(
+        //    "{:>16}\t{:>12}\t{:>12}\t{:>12}\t{:>12}\t",
+        //    "", "Precision", "Recall", "F1", ""
+        //);
+        //print!("\t");
+        //println!(
+        //    "{:>16}\t{:>12}\t{:>12}\t{:>12}\t{:>12}\t",
+        //    "", "Precision", "Recall", "F1", ""
+        //);
 
         for i in 0..4 {
             let (prec, rec, f1) = class_confusion.get_precision_recall_f1(i);
-            print!(
-                "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
-                Self::CLASS_NAMES[i],
-                prec,
-                rec,
-                f1,
-                ""
-            );
+            //print!(
+            //    "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
+            //    Self::CLASS_NAMES[i],
+            //    prec,
+            //    rec,
+            //    f1,
+            //    ""
+            //);
 
-            print!("\t");
+            //print!("\t");
 
             let (prec, rec, f1) = phase_confusion.get_precision_recall_f1(i);
-            print!(
-                "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
-                Self::PHASE_NAMES[i],
-                prec,
-                rec,
-                f1,
-                ""
-            );
+            //print!(
+            //    "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
+            //    Self::PHASE_NAMES[i],
+            //    prec,
+            //    rec,
+            //    f1,
+            //    ""
+            //);
 
-            println!();
+            //println!();
         }
 
-        println!();
+        //println!();
 
         let subg_true_pos = class_confusion.get_tp(2) + class_confusion.get_tp(3);
         let subg_false_pos = class_confusion.get_fp(2) + class_confusion.get_fp(3);
@@ -450,32 +450,32 @@ impl SequenceRating {
         let (coding_prec, coding_rec, coding_f1) =
             calc_precision_recall_f1(coding_true_pos, coding_false_pos, coding_false_neg);
 
-        print!(
-            "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
-            "Subgenic", subg_prec, subg_rec, subg_f1, ""
-        );
-        print!("\t");
-        println!(
-            "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
-            "Coding", coding_prec, coding_rec, coding_f1, ""
-        );
+        //print!(
+        //    "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
+        //    "Subgenic", subg_prec, subg_rec, subg_f1, ""
+        //);
+        //print!("\t");
+        //println!(
+        //    "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t{:>12}\t",
+        //    "Coding", coding_prec, coding_rec, coding_f1, ""
+        //);
 
-        println!(
-            "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t",
-            "Genic", gen_prec, gen_rec, gen_f1
-        );
+        //println!(
+        //    "{:>16}\t{:12.5}\t{:12.5}\t{:12.5}\t",
+        //    "Genic", gen_prec, gen_rec, gen_f1
+        //);
 
-        println!();
-        println!();
+        //println!();
+        //println!();
     }
 
     pub fn dump(&self, has_ref: bool) {
         if has_ref {
-            println!(
-                "Lost Ref Genic: Outside Window {}, Filtered {}",
-                self.outside_window_count, self.filtered_count
-            );
-            println!();
+            //println!(
+            //    "Lost Ref Genic: Outside Window {}, Filtered {}",
+            //    self.outside_window_count, self.filtered_count
+            //);
+            //println!();
 
             Self::show_confusion_matrices(
                 &self.ref_ml_class_confusion,
