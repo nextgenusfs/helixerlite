@@ -143,8 +143,11 @@ jobs:
 
       - name: Run tests
         run: |
-          # Run the test directly
+          # Install the package in development mode
           cd $GITHUB_WORKSPACE
+          python -m pip install -e .
+
+          # Run the test directly
           python tests/test_import.py
 
           # Also try to run with pytest
