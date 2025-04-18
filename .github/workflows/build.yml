@@ -128,7 +128,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest pytest-cov
-          python -m pip install dist/*.whl
+          # Find the wheel that matches the current Python version
+          PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+          WHEEL_PATH=$(find dist -name "*cp${PYTHON_VERSION}*" -type f)
+          if [ -z "$WHEEL_PATH" ]; then
+            echo "No wheel found for Python ${PYTHON_VERSION}"
+            ls -la dist/
+            exit 1
+          fi
+          echo "Installing wheel: $WHEEL_PATH"
+          python -m pip install $WHEEL_PATH
 
       - name: Run tests
         run: |
