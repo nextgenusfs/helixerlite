@@ -128,16 +128,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest pytest-cov
+          # Debug information
+          echo "Python version: $(python --version)"
+          echo "Python path: $(which python)"
+          echo "Python sys.path: $(python -c "import sys; print(sys.path)")"
+          echo "Contents of dist directory:"
+          ls -la dist/
+
           # Find the wheel that matches the current Python version
           PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+          echo "Looking for wheel matching Python ${PYTHON_VERSION}"
           WHEEL_PATH=$(find dist -name "*cp${PYTHON_VERSION}*" -type f)
           if [ -z "$WHEEL_PATH" ]; then
             echo "No wheel found for Python ${PYTHON_VERSION}"
-            ls -la dist/
             exit 1
           fi
           echo "Installing wheel: $WHEEL_PATH"
           python -m pip install $WHEEL_PATH
+
+          # Verify installation
+          echo "Installed packages:"
+          python -m pip list | grep helixerlite
 
       - name: Run tests
         run: |
