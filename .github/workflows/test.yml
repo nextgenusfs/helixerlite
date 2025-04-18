@@ -31,21 +31,28 @@ jobs:
       shell: bash -el {0}
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          conda install -c conda-forge "hdf5=1.12.2=nompi*" rust gxx_linux-64
+          conda install -c conda-forge "hdf5=1.12.2=nompi*" rust maturin gxx_linux-64
         else
-          conda install -c conda-forge "hdf5=1.12.2=nompi*" rust
+          conda install -c conda-forge "hdf5=1.12.2=nompi*" rust maturin
         fi
         python -m pip install --upgrade pip
         python -m pip install pytest pytest-cov
+
+        # Build the Rust code first
+        export HDF5_DIR=$CONDA_PREFIX
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
+          export RUSTFLAGS="-C linker=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc"
+        fi
+        maturin develop --release
+
+        # Install dev dependencies
         python -m pip install -e ".[dev]"
 
     - name: Run tests
       shell: bash -el {0}
       run: |
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
-        fi
-        export HDF5_DIR=$CONDA_PREFIX
+        # Run the tests
         python -m pytest --cov=helixerlite
 
     - name: Upload coverage to Codecov
