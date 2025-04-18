@@ -1,6 +1,6 @@
 [package]
 name = "helixerlite"
-version = "0.1.1"
+version = "25.4.17"
 authors = ["Tony Bolger <bolger.tony@gmail.com>", "Jonathan Palmer <nextgenusfs@gmail.com>"]
 edition = "2021"
 
@@ -11,5 +11,5 @@ pyo3 = { version = "0.22.5", features = ["extension-module"] }
 displaydoc = "0.2.5"
 
 [lib]
-name = "helixerpost"
+name = "helixerlite"
 crate-type = ["cdylib"]
