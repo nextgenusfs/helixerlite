@@ -97,7 +97,6 @@ jobs:
           path: target/sdist/*.tar.gz
 
   test-upload:
-    environment: TestPyPI
     runs-on: ubuntu-latest
     name: Upload to TestPyPI
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_testpypi == 'true'

@@ -117,7 +117,6 @@ jobs:
           path: target/sdist/*.tar.gz
 
   upload:
-    environment: PyPI
     runs-on: ubuntu-latest
     name: Upload to PyPI
     needs:
@@ -169,7 +168,6 @@ jobs:
           python -c "import helixerlite; print(f'Successfully installed helixerlite version {helixerlite.__version__}')"
 
   release:
-    environment: GitHub Releases
     runs-on: ubuntu-latest
     name: Create GitHub Release
     needs: [upload, verify-install]
