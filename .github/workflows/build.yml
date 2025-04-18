@@ -28,7 +28,10 @@ jobs:
           export HDF5_DIR=$CONDA_PREFIX
           export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
           export RUSTFLAGS="-C linker=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc"
-          maturin build --release --target x86_64-unknown-linux-gnu
+          # Build wheels for Python 3.9, 3.10, and 3.11
+          for PY_VERSION in 3.9 3.10 3.11; do
+            python -m cibuildwheel --output-dir target/wheels --platform linux --arch x86_64 --python "$PY_VERSION"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-x86_64
@@ -54,7 +57,10 @@ jobs:
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
-          maturin build --release
+          # Build wheels for Python 3.9, 3.10, and 3.11
+          for PY_VERSION in 3.9 3.10 3.11; do
+            python -m cibuildwheel --output-dir target/wheels --platform macos --arch x86_64 --python "$PY_VERSION"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-macos-x86_64
