@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "helixerlite"
-version = "24.11.10"
+version = "25.4.17"
 description = "helixerlite: simplified genome annotation with Helixer"
 readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
@@ -23,6 +23,7 @@ dependencies = [
     "numcodecs",
     "gfftk"
 ]
+
 license = {file = "LICENSE"}
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -33,6 +34,13 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 keywords = ["bioinformatics", "genome", "annotation"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0"
+]
 
 [project.urls]
 Homepage = "https://github.com/nextgenusfs/helixerlite"
@@ -54,3 +62,10 @@ exclude = [
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=helixerlite"

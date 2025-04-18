@@ -1,0 +1,118 @@
+name: Test Publish
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  wheel-linux-x86_64:
+    name: Build Linux wheels (x86-64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build manylinux wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_ARCHS: x86_64
+          CIBW_BUILD: 'cp*-manylinux_x86_64'
+        with:
+          output-dir: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-manylinux_x86_64
+          path: dist/*
+
+  wheel-macos-x86_64:
+    name: Build MacOS wheels (x86-64)
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - name: Build manylinux wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_ARCHS: x86_64
+          CIBW_BUILD: 'cp*-macosx_x86_64'
+          CIBW_ENVIRONMENT: MACOSX_DEPLOYMENT_TARGET=12.0
+          CIBW_TEST_SKIP: "*"
+        with:
+          output-dir: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macosx_x86_64
+          path: dist/*
+
+  sdist:
+    runs-on: ubuntu-latest
+    name: Build source distribution
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install CI requirements
+        run: python -m pip install -U build maturin
+      - name: Build source distribution without vendored sources
+        run: python -m build -s . -n
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*
+
+  test-upload:
+    environment: TestPyPI
+    runs-on: ubuntu-latest
+    name: Upload to TestPyPI
+    needs:
+      - sdist
+      - wheel-linux-x86_64
+      - wheel-macos-x86_64
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+    steps:
+      - name: Download source distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist/
+          merge-multiple: true
+      - name: Download wheel distributions
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist/
+          merge-multiple: true
+      - name: Publish distributions to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+
+  test-install:
+    needs: test-upload
+    runs-on: ubuntu-latest
+    name: Test installation from TestPyPI
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install from TestPyPI
+        run: |
+          # Wait a bit for the package to be available
+          sleep 60
+          # Try to install the package from TestPyPI
+          python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ helixerlite
+      - name: Verify installation
+        run: |
+          python -c "import helixerlite; print(f'Successfully installed helixerlite version {helixerlite.__version__}')"

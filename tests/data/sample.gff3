@@ -1,0 +1,15 @@
+##gff-version 3
+##sequence-region seq1 1 300
+seq1	helixer	gene	1	300	.	+	.	ID=gene1
+seq1	helixer	mRNA	1	300	.	+	.	ID=mRNA1;Parent=gene1
+seq1	helixer	exon	1	100	.	+	.	ID=exon1;Parent=mRNA1
+seq1	helixer	CDS	1	100	.	+	0	ID=CDS1;Parent=mRNA1
+seq1	helixer	exon	201	300	.	+	.	ID=exon2;Parent=mRNA1
+seq1	helixer	CDS	201	300	.	+	0	ID=CDS2;Parent=mRNA1
+##sequence-region seq2 1 300
+seq2	helixer	gene	1	300	.	-	.	ID=gene2
+seq2	helixer	mRNA	1	300	.	-	.	ID=mRNA2;Parent=gene2
+seq2	helixer	exon	1	100	.	-	.	ID=exon3;Parent=mRNA2
+seq2	helixer	CDS	1	100	.	-	0	ID=CDS3;Parent=mRNA2
+seq2	helixer	exon	201	300	.	-	.	ID=exon4;Parent=mRNA2
+seq2	helixer	CDS	201	300	.	-	0	ID=CDS4;Parent=mRNA2

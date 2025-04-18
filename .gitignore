@@ -1,0 +1,103 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# HDF5 files
+*.h5
+*.hdf5
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.env
+.venv
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Data files
+*.fasta
+*.fa
+*.fna
+*.ffn
+*.faa
+*.frn
+*.gbk
+*.gb
+*.gbff
+*.gff
+*.gff3
+*.gtf
+*.bed
+*.vcf
+*.vcf.gz
+*.tbi
+*.bam
+*.bai
+*.sam
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+
+# Exceptions for test data
+!tests/data/*.fasta
+!tests/data/*.h5
+!tests/data/*.gff3
+!tests/data/*.gb

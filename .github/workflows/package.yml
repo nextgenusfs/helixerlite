@@ -1,0 +1,173 @@
+name: Package
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  wheel-linux-x86_64:
+    name: Build Linux wheels (x86-64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build manylinux wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_ARCHS: x86_64
+          CIBW_BUILD: 'cp*-manylinux_x86_64'
+        with:
+          output-dir: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-manylinux_x86_64
+          path: dist/*
+
+  wheel-macos-x86_64:
+    name: Build MacOS wheels (x86-64)
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - name: Build manylinux wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_ARCHS: x86_64
+          CIBW_BUILD: 'cp*-macosx_x86_64'
+          CIBW_ENVIRONMENT: MACOSX_DEPLOYMENT_TARGET=12.0
+          CIBW_TEST_SKIP: "*"
+        with:
+          output-dir: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macosx_x86_64
+          path: dist/*
+
+  wheel-macos-aarch64:
+    name: Build MacOS wheels (Aarch64)
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+      - name: Build manylinux wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_ARCHS: arm64
+          CIBW_BUILD: 'cp*-macosx_arm64'
+        with:
+          output-dir: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macosx_arm64
+          path: dist/*
+
+  wheel-win32-x86_64:
+    name: Build Windows wheels (x86-64)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build manylinux wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_ARCHS: AMD64
+          CIBW_BUILD: 'cp*-win_amd64'
+        with:
+          output-dir: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-win_amd64
+          path: dist/*
+
+  sdist:
+    runs-on: ubuntu-latest
+    name: Build source distribution
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install CI requirements
+        run: python -m pip install -U build maturin
+      - name: Build source distribution without vendored sources
+        run: python -m build -s . -n
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*
+
+  upload:
+    environment: PyPI
+    runs-on: ubuntu-latest
+    name: Upload
+    if: "startsWith(github.ref, 'refs/tags/v')"
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+    needs:
+      - sdist
+      - wheel-linux-x86_64
+      - wheel-macos-aarch64
+      - wheel-macos-x86_64
+      - wheel-win32-x86_64
+    steps:
+      - name: Download source distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist/
+          merge-multiple: true
+      - name: Download wheel distributions
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist/
+          merge-multiple: true
+      - name: Publish distributions to PyPI
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  verify-install:
+    runs-on: ubuntu-latest
+    name: Verify PyPI installation
+    needs: upload
+    if: "startsWith(github.ref, 'refs/tags/v')"
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install from PyPI
+        run: |
+          # Wait a bit for the package to be available
+          sleep 120
+          # Try to install the package from PyPI
+          python -m pip install helixerlite
+      - name: Verify installation
+        run: |
+          python -c "import helixerlite; print(f'Successfully installed helixerlite version {helixerlite.__version__}')"
+
+  release:
+    environment: GitHub Releases
+    runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/v')"
+    name: Release
+    needs: [upload, verify-install]
+    permissions: write-all
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
