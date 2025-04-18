@@ -1,15 +1,9 @@
-name: Build and Test Publish
+name: Build
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    inputs:
-      publish_to_testpypi:
-        description: 'Publish to TestPyPI'
-        required: true
-        default: false
-        type: boolean
 
 jobs:
   wheel-linux-x86_64:
@@ -96,57 +90,4 @@ jobs:
           name: sdist
           path: target/sdist/*.tar.gz
 
-  test-upload:
-    runs-on: ubuntu-latest
-    name: Upload to TestPyPI
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_testpypi == 'true'
-    needs:
-      - sdist
-      - wheel-linux-x86_64
-      - wheel-macos-x86_64
-    permissions:
-      # IMPORTANT: this permission is mandatory for trusted publishing
-      id-token: write
-    steps:
-      - name: Download source distribution
-        uses: actions/download-artifact@v4
-        with:
-          name: sdist
-          path: dist/
-          merge-multiple: true
-      - name: Download wheel distributions
-        uses: actions/download-artifact@v4
-        with:
-          pattern: wheels-*
-          path: dist/
-          merge-multiple: true
-      - name: List files in dist directory
-        run: ls -la dist/
-      - name: Publish distributions to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
 
-  test-install:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_testpypi == 'true'
-    needs: test-upload
-    runs-on: ubuntu-latest
-    name: Test installation from TestPyPI
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-    steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install from TestPyPI
-        run: |
-          # Wait a bit for the package to be available
-          sleep 60
-          # Try to install the package from TestPyPI
-          python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ helixerlite
-      - name: Verify installation
-        run: |
-          python -c "import helixerlite; print(f'Successfully installed helixerlite version {helixerlite.__version__}')"
