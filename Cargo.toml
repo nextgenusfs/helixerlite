@@ -12,5 +12,4 @@ displaydoc = "0.2.5"
 
 [lib]
 name = "helixerpost"
-crate-type = ["cdylib", "rlib"]
-doctest = false
+crate-type = ["cdylib"]
