@@ -143,9 +143,9 @@ jobs:
 
       - name: Run tests
         run: |
-          # Install the package in development mode
+          # Install the wheel directly
           cd $GITHUB_WORKSPACE
-          python -m pip install -e .
+          python -m pip install dist/*.whl
 
           # Run the test directly
           python tests/test_import.py
