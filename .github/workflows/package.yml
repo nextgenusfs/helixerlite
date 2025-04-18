@@ -11,11 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install HDF5
+        run: sudo apt-get update && sudo apt-get install -y libhdf5-dev
       - name: Build manylinux wheels
         uses: pypa/cibuildwheel@v2.21.3
         env:
           CIBW_ARCHS: x86_64
           CIBW_BUILD: 'cp*-manylinux_x86_64'
+          CIBW_BEFORE_ALL: "yum install -y hdf5-devel"
         with:
           output-dir: dist
       - uses: actions/upload-artifact@v4
@@ -31,12 +34,14 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-apple-darwin
+      - name: Install HDF5
+        run: brew install hdf5
       - name: Build manylinux wheels
         uses: pypa/cibuildwheel@v2.21.3
         env:
           CIBW_ARCHS: x86_64
           CIBW_BUILD: 'cp*-macosx_x86_64'
-          CIBW_ENVIRONMENT: MACOSX_DEPLOYMENT_TARGET=12.0
+          CIBW_ENVIRONMENT: "MACOSX_DEPLOYMENT_TARGET=12.0 HDF5_DIR=$(brew --prefix hdf5) DYLD_LIBRARY_PATH=$(brew --prefix hdf5)/lib:$DYLD_LIBRARY_PATH"
           CIBW_TEST_SKIP: "*"
         with:
           output-dir: dist
@@ -53,11 +58,14 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin
+      - name: Install HDF5
+        run: brew install hdf5
       - name: Build manylinux wheels
         uses: pypa/cibuildwheel@v2.21.3
         env:
           CIBW_ARCHS: arm64
           CIBW_BUILD: 'cp*-macosx_arm64'
+          CIBW_ENVIRONMENT: "HDF5_DIR=$(brew --prefix hdf5) DYLD_LIBRARY_PATH=$(brew --prefix hdf5)/lib:$DYLD_LIBRARY_PATH"
         with:
           output-dir: dist
       - uses: actions/upload-artifact@v4
@@ -71,6 +79,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - name: Install HDF5
+        run: |
+          choco install hdf5
+          echo "HDF5_DIR=C:\Program Files\HDF_Group\HDF5\1.14.0" >> $env:GITHUB_ENV
       - name: Build manylinux wheels
         uses: pypa/cibuildwheel@v2.21.3
         env:
