@@ -147,6 +147,18 @@ jobs:
           cd $GITHUB_WORKSPACE
           python -m pip install dist/*.whl
 
+          # Get the site-packages directory
+          SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
+          echo "Site-packages directory: $SITE_PACKAGES"
+
+          # Copy the helixerlite module to site-packages
+          echo "Copying helixerlite module to site-packages..."
+          cp -r $GITHUB_WORKSPACE/helixerlite $SITE_PACKAGES/
+
+          # List the contents of site-packages
+          echo "Contents of site-packages:"
+          ls -la $SITE_PACKAGES | grep helixer
+
           # Run the test directly
           python tests/test_import.py
 
