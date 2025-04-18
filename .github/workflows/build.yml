@@ -21,17 +21,32 @@ jobs:
         shell: bash -el {0}
         run: |
           conda install -c conda-forge "hdf5=1.12.2=nompi*" rust maturin gxx_linux-64
-          pip install cibuildwheel
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Build wheels
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
           export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
           export RUSTFLAGS="-C linker=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc"
-          # Build wheels for Python 3.9, 3.10, and 3.11
-          for PY_VERSION in 3.9 3.10 3.11; do
-            python -m cibuildwheel --output-dir target/wheels --platform linux --arch x86_64 --python "$PY_VERSION"
-          done
+          # Find all Python interpreters
+          PYTHON_INTERPRETERS=$(find /opt/hostedtoolcache/Python -name "python" -type f | grep -v "3.8" | tr '\n' ' ')
+          echo "Found Python interpreters: $PYTHON_INTERPRETERS"
+          # Build wheels for all Python interpreters
+          maturin build --release --target x86_64-unknown-linux-gnu -i $PYTHON_INTERPRETERS
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-x86_64
@@ -52,15 +67,30 @@ jobs:
         shell: bash -el {0}
         run: |
           conda install -c conda-forge "hdf5=1.12.2=nompi*" rust maturin
-          pip install cibuildwheel
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Build wheels
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
-          # Build wheels for Python 3.9, 3.10, and 3.11
-          for PY_VERSION in 3.9 3.10 3.11; do
-            python -m cibuildwheel --output-dir target/wheels --platform macos --arch x86_64 --python "$PY_VERSION"
-          done
+          # Find all Python interpreters
+          PYTHON_INTERPRETERS=$(find /Users/runner/hostedtoolcache/Python -name "python" -type f | grep -v "3.8" | tr '\n' ' ')
+          echo "Found Python interpreters: $PYTHON_INTERPRETERS"
+          # Build wheels for all Python interpreters
+          maturin build --release -i $PYTHON_INTERPRETERS
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-macos-x86_64

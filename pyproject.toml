@@ -69,7 +69,3 @@ python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
 addopts = "-v --cov=helixerlite"
-
-[tool.cibuildwheel]
-skip = "pp* cp36-* cp37-* cp38-*"
-build-frontend = "maturin"
