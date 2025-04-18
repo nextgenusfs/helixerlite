@@ -15,7 +15,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: 3.10
+          python-version: "3.10"
       - name: Install dependencies
         shell: bash -el {0}
         run: |
@@ -38,7 +38,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: 3.10
+          python-version: "3.10"
       - name: Install dependencies
         shell: bash -el {0}
         run: |
@@ -63,7 +63,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: 3.10
+          python-version: "3.10"
       - name: Install dependencies
         shell: bash -el {0}
         run: |
@@ -76,4 +76,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: target/wheels/*.tar.gz
+          path: target/sdist/*.tar.gz
