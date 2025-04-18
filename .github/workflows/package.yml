@@ -20,12 +20,14 @@ jobs:
       - name: Install dependencies
         shell: bash -el {0}
         run: |
-          conda install -c conda-forge hdf5 rust maturin
+          conda install -c conda-forge hdf5 rust maturin gxx_linux-64
           pip install cibuildwheel
       - name: Build wheels
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
+          export RUSTFLAGS="-C target-feature=-crt-static"
+          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
           maturin build --release
       - uses: actions/upload-artifact@v4
         with:
@@ -100,12 +102,14 @@ jobs:
       - name: Install dependencies
         shell: bash -el {0}
         run: |
-          conda install -c conda-forge hdf5 rust maturin
+          conda install -c conda-forge hdf5 rust maturin gxx_linux-64
           pip install build
       - name: Build source distribution
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
+          export RUSTFLAGS="-C target-feature=-crt-static"
+          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
           maturin sdist
       - uses: actions/upload-artifact@v4
         with:
