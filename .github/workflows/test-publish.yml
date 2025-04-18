@@ -11,66 +11,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install HDF5
-        run: sudo apt-get update && sudo apt-get install -y libhdf5-dev
-      - name: Build manylinux wheels
-        uses: pypa/cibuildwheel@v2.21.3
-        env:
-          CIBW_ARCHS: x86_64
-          CIBW_BUILD: 'cp*-manylinux_x86_64'
-          CIBW_BEFORE_ALL: "yum install -y hdf5-devel"
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          output-dir: dist
+          auto-update-conda: true
+          python-version: 3.10
+      - name: Install dependencies
+        shell: bash -el {0}
+        run: |
+          conda install -c conda-forge hdf5 maturin
+          pip install cibuildwheel
+      - name: Build wheels
+        shell: bash -el {0}
+        run: |
+          maturin build --release
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-manylinux_x86_64
-          path: dist/*
+          name: wheels-linux-x86_64
+          path: target/wheels/*.whl
 
   wheel-macos-x86_64:
     name: Build MacOS wheels (x86-64)
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          targets: x86_64-apple-darwin
-      - name: Install HDF5
-        run: brew install hdf5
-      - name: Build manylinux wheels
-        uses: pypa/cibuildwheel@v2.21.3
-        env:
-          CIBW_ARCHS: x86_64
-          CIBW_BUILD: 'cp*-macosx_x86_64'
-          CIBW_ENVIRONMENT: "MACOSX_DEPLOYMENT_TARGET=12.0 HDF5_DIR=$(brew --prefix hdf5) DYLD_LIBRARY_PATH=$(brew --prefix hdf5)/lib:$DYLD_LIBRARY_PATH"
-          CIBW_TEST_SKIP: "*"
-        with:
-          output-dir: dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels-macosx_x86_64
-          path: dist/*
-
-  wheel-win32-x86_64:
-    name: Build Windows wheels (x86-64)
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Install HDF5
+          auto-update-conda: true
+          python-version: 3.10
+      - name: Install dependencies
+        shell: bash -el {0}
         run: |
-          choco install hdf5
-          echo "HDF5_DIR=C:\Program Files\HDF_Group\HDF5\1.14.0" >> $env:GITHUB_ENV
-      - name: Build manylinux wheels
-        uses: pypa/cibuildwheel@v2.21.3
-        env:
-          CIBW_ARCHS: AMD64
-          CIBW_BUILD: 'cp*-win_amd64'
-        with:
-          output-dir: dist
+          conda install -c conda-forge hdf5 maturin
+          pip install cibuildwheel
+      - name: Build wheels
+        shell: bash -el {0}
+        run: |
+          maturin build --release
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-win_amd64
-          path: dist/*
+          name: wheels-macos-x86_64
+          path: target/wheels/*.whl
 
   sdist:
     runs-on: ubuntu-latest
@@ -79,18 +59,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: '3.10'
-      - name: Install CI requirements
-        run: python -m pip install -U build maturin
-      - name: Build source distribution without vendored sources
-        run: python -m build -s . -n
+          auto-update-conda: true
+          python-version: 3.10
+      - name: Install dependencies
+        shell: bash -el {0}
+        run: |
+          conda install -c conda-forge hdf5 maturin
+          pip install build
+      - name: Build source distribution
+        shell: bash -el {0}
+        run: |
+          maturin sdist
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: dist/*
+          path: target/wheels/*.tar.gz
 
   test-upload:
     environment: TestPyPI
@@ -100,7 +85,6 @@ jobs:
       - sdist
       - wheel-linux-x86_64
       - wheel-macos-x86_64
-      - wheel-win32-x86_64
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
@@ -117,6 +101,8 @@ jobs:
           pattern: wheels-*
           path: dist/
           merge-multiple: true
+      - name: List files in dist directory
+        run: ls -la dist/
       - name: Publish distributions to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
