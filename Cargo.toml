@@ -5,7 +5,7 @@ authors = ["Tony Bolger <bolger.tony@gmail.com>", "Jonathan Palmer <nextgenusfs@
 edition = "2021"
 
 [dependencies]
-hdf5 = { git = "https://github.com/10XGenomics/hdf5-rust.git", branch = "conda_nov2021", features = ["conda", "static"] }
+hdf5 = { git = "https://github.com/10XGenomics/hdf5-rust.git", branch = "conda_nov2021", features = ["conda"] }
 ndarray = "=0.16.1"
 pyo3 = { version = "0.22.5", features = ["extension-module"] }
 
