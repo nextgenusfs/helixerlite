@@ -57,19 +57,17 @@ jobs:
           cd test_dir
 
           # Create a simple test file
-          cat > test_helixerlite.py << 'EOF'
-import unittest
-import helixerlite
-
-class TestHelixerlite(unittest.TestCase):
-    def test_import(self):
-        """Test that the module can be imported."""
-        self.assertTrue(hasattr(helixerlite, '__version__'))
-        print(f"Successfully imported helixerlite version {helixerlite.__version__}")
-
-if __name__ == '__main__':
-    unittest.main()
-EOF
+          echo 'import unittest' > test_helixerlite.py
+          echo 'import helixerlite' >> test_helixerlite.py
+          echo '' >> test_helixerlite.py
+          echo 'class TestHelixerlite(unittest.TestCase):' >> test_helixerlite.py
+          echo '    def test_import(self):' >> test_helixerlite.py
+          echo '        """Test that the module can be imported."""' >> test_helixerlite.py
+          echo '        self.assertTrue(hasattr(helixerlite, "__version__"))' >> test_helixerlite.py
+          echo '        print(f"Successfully imported helixerlite version {helixerlite.__version__}")' >> test_helixerlite.py
+          echo '' >> test_helixerlite.py
+          echo 'if __name__ == "__main__":' >> test_helixerlite.py
+          echo '    unittest.main()' >> test_helixerlite.py
 
           # Run the test
           python -m pytest test_helixerlite.py -v

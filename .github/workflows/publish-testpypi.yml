@@ -29,7 +29,8 @@ jobs:
         with:
           workflow: build.yml
           run_id: ${{ github.event.inputs.run_id }}
-          name_regex: wheels-.*
+          name: wheels-
+          name_is_regexp: true
           path: dist/
 
       - name: List files in dist directory
