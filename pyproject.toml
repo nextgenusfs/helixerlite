@@ -52,6 +52,7 @@ helixerlite = "helixerlite.__main__:main"
 [tool.maturin.build]
 include = [
   "helixerlite/*.py",
+  "helixerlite/**/*.py",
   "README.md",
   "LICENSE",
   "helixerlite/model_files/*"
@@ -59,6 +60,15 @@ include = [
 exclude = [
   "tests/*",
 ]
+
+# This is the Python package to include
+python-packages = ["helixerlite"]
+
+# This is the source directory for Python code
+python-source = "."
+
+# This tells maturin to use mixed Rust/Python mode
+mixed-rustpython = true
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
