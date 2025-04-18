@@ -8,6 +8,7 @@ edition = "2021"
 hdf5 = { git = "https://github.com/10XGenomics/hdf5-rust.git", branch = "conda_nov2021", features = ["conda"] }
 ndarray = "=0.16.1"
 pyo3 = { version = "0.22.5", features = ["extension-module"] }
+displaydoc = "0.2.5"
 
 [lib]
 name = "helixerpost"
