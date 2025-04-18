@@ -49,6 +49,19 @@ Repository = "https://github.com/nextgenusfs/helixerlite.git"
 [project.scripts]
 helixerlite = "helixerlite.__main__:main"
 
+[tool.maturin]
+features = ["pyo3/extension-module"]
+# Use bindings-crate to specify the Rust crate that provides Python bindings
+bindings-crate = "helixerlite"
+# Use module-name to specify the name of the Python module
+module-name = "helixerpost"
+# Use python-packages to include Python packages
+python-packages = ["helixerlite"]
+# Use python-source to specify the source directory for Python code
+python-source = "."
+# Use mixed-rustpython to tell maturin this is a mixed Rust/Python project
+mixed-rustpython = true
+
 [tool.maturin.build]
 include = [
   "helixerlite/*.py",
@@ -60,18 +73,6 @@ include = [
 exclude = [
   "tests/*",
 ]
-
-# This is the Python package to include
-python-packages = ["helixerlite"]
-
-# This is the source directory for Python code
-python-source = "."
-
-# This tells maturin to use mixed Rust/Python mode
-mixed-rustpython = true
-
-[tool.maturin]
-features = ["pyo3/extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

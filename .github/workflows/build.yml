@@ -143,9 +143,9 @@ jobs:
 
       - name: Run tests
         run: |
-          # Install the wheel directly
+          # Install the wheel directly with force-reinstall
           cd $GITHUB_WORKSPACE
-          python -m pip install dist/*.whl
+          python -m pip install --force-reinstall dist/*.whl
 
           # Get the site-packages directory
           SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
