@@ -1,10 +1,12 @@
 import importlib.metadata
+import sys
 
+# Make helixerpost available at the package level
 try:
-    from . import helixerlite
-    # Import any functions or classes from the Rust module that you want to expose
-    # For example: from .helixerlite import some_function
+    import helixerpost
+
+    sys.modules["helixerlite.helixerpost"] = helixerpost
 except ImportError as e:
-    print(f"Error importing Rust module: {e}")
+    print(f"Error importing helixerpost module: {e}")
 
 __version__ = importlib.metadata.version("helixerlite")

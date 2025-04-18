@@ -11,5 +11,5 @@ pyo3 = { version = "0.22.5", features = ["extension-module"] }
 displaydoc = "0.2.5"
 
 [lib]
-name = "helixerlite"
+name = "helixerpost"
 crate-type = ["cdylib"]
