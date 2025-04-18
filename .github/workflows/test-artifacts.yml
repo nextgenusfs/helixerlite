@@ -17,35 +17,45 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11']
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      
-      - name: Download wheel for platform
+
+      - name: Download Linux wheel
+        if: matrix.os == 'ubuntu-latest'
         uses: dawidd6/action-download-artifact@v3
         with:
           workflow: build.yml
           run_id: ${{ github.event.inputs.run_id }}
-          name: ${{ matrix.os == 'ubuntu-latest' && 'wheels-linux-x86_64' || 'wheels-macos-x86_64' }}
+          name: wheels-linux-x86_64
           path: dist/
-      
+
+      - name: Download macOS wheel
+        if: matrix.os == 'macos-latest'
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: build.yml
+          run_id: ${{ github.event.inputs.run_id }}
+          name: wheels-macos-x86_64
+          path: dist/
+
       - name: Install package from wheel
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest pytest-cov
           python -m pip install dist/*.whl
-      
+
       - name: Run tests
         run: |
           # Create a temporary directory for tests
           mkdir -p test_dir
           cd test_dir
-          
+
           # Create a simple test file
           cat > test_helixerlite.py << 'EOF'
 import unittest
@@ -60,10 +70,10 @@ class TestHelixerlite(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 EOF
-          
+
           # Run the test
           python -m pytest test_helixerlite.py -v
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
