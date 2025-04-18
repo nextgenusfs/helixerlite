@@ -7,93 +7,61 @@ on:
 
 jobs:
   wheel-linux-x86_64:
-    name: Build Linux wheels (x86-64)
+    name: Build Linux wheel (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge
           channel-priority: strict
       - name: Install dependencies
         shell: bash -el {0}
         run: |
           conda install -c conda-forge "hdf5=1.12.2=nompi*" rust maturin gxx_linux-64
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Build wheels
+      - name: Build wheel
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
           export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
           export RUSTFLAGS="-C linker=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc"
-          # Find all Python interpreters
-          PYTHON_INTERPRETERS=$(find /opt/hostedtoolcache/Python -name "python" -type f | grep -v "3.8" | tr '\n' ' ')
-          echo "Found Python interpreters: $PYTHON_INTERPRETERS"
-          # Build wheels for all Python interpreters
-          maturin build --release --target x86_64-unknown-linux-gnu -i $PYTHON_INTERPRETERS
+          maturin build --release --target x86_64-unknown-linux-gnu
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-linux-x86_64
+          name: wheels-linux-x86_64-py${{ matrix.python-version }}
           path: target/wheels/*.whl
 
   wheel-macos-x86_64:
-    name: Build MacOS wheels (x86-64)
+    name: Build MacOS wheel (Python ${{ matrix.python-version }})
     runs-on: macOS-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge
           channel-priority: strict
       - name: Install dependencies
         shell: bash -el {0}
         run: |
           conda install -c conda-forge "hdf5=1.12.2=nompi*" rust maturin
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Build wheels
+      - name: Build wheel
         shell: bash -el {0}
         run: |
           export HDF5_DIR=$CONDA_PREFIX
-          # Find all Python interpreters
-          PYTHON_INTERPRETERS=$(find /Users/runner/hostedtoolcache/Python -name "python" -type f | grep -v "3.8" | tr '\n' ' ')
-          echo "Found Python interpreters: $PYTHON_INTERPRETERS"
-          # Build wheels for all Python interpreters
-          maturin build --release -i $PYTHON_INTERPRETERS
+          maturin build --release
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-macos-x86_64
+          name: wheels-macos-x86_64-py${{ matrix.python-version }}
           path: target/wheels/*.whl
 
   sdist:
@@ -150,14 +118,14 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/download-artifact@v4
         with:
-          name: wheels-linux-x86_64
+          name: wheels-linux-x86_64-py${{ matrix.python-version }}
           path: dist/
 
       - name: Download wheel for macOS
         if: matrix.os == 'macos-latest'
         uses: actions/download-artifact@v4
         with:
-          name: wheels-macos-x86_64
+          name: wheels-macos-x86_64-py${{ matrix.python-version }}
           path: dist/
 
       - name: Install package from wheel
@@ -167,20 +135,11 @@ jobs:
           # Debug information
           echo "Python version: $(python --version)"
           echo "Python path: $(which python)"
-          echo "Python sys.path: $(python -c "import sys; print(sys.path)")"
           echo "Contents of dist directory:"
           ls -la dist/
 
-          # Find the wheel that matches the current Python version
-          PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
-          echo "Looking for wheel matching Python ${PYTHON_VERSION}"
-          WHEEL_PATH=$(find dist -name "*cp${PYTHON_VERSION}*" -type f)
-          if [ -z "$WHEEL_PATH" ]; then
-            echo "No wheel found for Python ${PYTHON_VERSION}"
-            exit 1
-          fi
-          echo "Installing wheel: $WHEEL_PATH"
-          python -m pip install $WHEEL_PATH
+          # Install the wheel
+          python -m pip install dist/*.whl
 
           # Verify installation
           echo "Installed packages:"
