@@ -159,26 +159,10 @@ jobs:
 
       - name: Run tests
         run: |
-          # Create a temporary directory for tests
-          mkdir -p test_dir
-          cd test_dir
-
-          # Create a simple test file
-          echo 'import unittest' > test_helixerlite.py
-          echo 'import helixerlite' >> test_helixerlite.py
-          echo '' >> test_helixerlite.py
-          echo 'class TestHelixerlite(unittest.TestCase):' >> test_helixerlite.py
-          echo '    def test_import(self):' >> test_helixerlite.py
-          echo '        """Test that the module can be imported."""' >> test_helixerlite.py
-          echo '        self.assertTrue(hasattr(helixerlite, "__version__"))' >> test_helixerlite.py
-          echo '        print(f"Successfully imported helixerlite version {helixerlite.__version__}")' >> test_helixerlite.py
-          echo '' >> test_helixerlite.py
-          echo 'if __name__ == "__main__":' >> test_helixerlite.py
-          echo '    unittest.main()' >> test_helixerlite.py
-
           # Run the test directly
-          python test_helixerlite.py
+          cd $GITHUB_WORKSPACE
+          python tests/test_import.py
 
           # Also try to run with pytest
           echo "\nRunning with pytest:"
-          python -m pytest test_helixerlite.py -v || echo "Pytest failed but direct test passed"
+          python -m pytest tests/test_import.py -v || echo "Pytest failed but direct test passed"
