@@ -84,10 +84,12 @@ jobs:
           export HDF5_DIR=$CONDA_PREFIX
           export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc
           export RUSTFLAGS="-C linker=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc"
-          maturin sdist
+          maturin sdist -v
+          echo "Listing target directory:"
+          find target -type f -name "*.tar.gz" | sort
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: target/sdist/*.tar.gz
+          path: target/wheels/*.tar.gz
 
 
