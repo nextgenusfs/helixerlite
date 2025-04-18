@@ -15,14 +15,17 @@ jobs:
         with:
           auto-update-conda: true
           python-version: "3.10"
+          channels: conda-forge
+          channel-priority: strict
       - name: Install dependencies
         shell: bash -el {0}
         run: |
-          conda install -c conda-forge hdf5 maturin
+          conda install -c conda-forge hdf5 rust maturin
           pip install cibuildwheel
       - name: Build wheels
         shell: bash -el {0}
         run: |
+          export HDF5_DIR=$CONDA_PREFIX
           maturin build --release
       - uses: actions/upload-artifact@v4
         with:
@@ -38,14 +41,17 @@ jobs:
         with:
           auto-update-conda: true
           python-version: "3.10"
+          channels: conda-forge
+          channel-priority: strict
       - name: Install dependencies
         shell: bash -el {0}
         run: |
-          conda install -c conda-forge hdf5 maturin
+          conda install -c conda-forge hdf5 rust maturin
           pip install cibuildwheel
       - name: Build wheels
         shell: bash -el {0}
         run: |
+          export HDF5_DIR=$CONDA_PREFIX
           maturin build --release
       - uses: actions/upload-artifact@v4
         with:
@@ -63,14 +69,17 @@ jobs:
         with:
           auto-update-conda: true
           python-version: "3.10"
+          channels: conda-forge
+          channel-priority: strict
       - name: Install dependencies
         shell: bash -el {0}
         run: |
-          conda install -c conda-forge hdf5 maturin
+          conda install -c conda-forge hdf5 rust maturin
           pip install build
       - name: Build source distribution
         shell: bash -el {0}
         run: |
+          export HDF5_DIR=$CONDA_PREFIX
           maturin sdist
       - uses: actions/upload-artifact@v4
         with:
