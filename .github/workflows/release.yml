@@ -182,8 +182,8 @@ jobs:
         run: |
           # Wait a bit for the package to be available
           sleep 120
-          # Try to install the package from PyPI
-          python -m pip install helixerlite
+          # Try to install the package from PyPI with binary only
+          python -m pip install --only-binary=helixerlite helixerlite
       - name: Verify installation
         run: |
           python -c "import helixerlite; print(f'Successfully installed helixerlite version {helixerlite.__version__}')"
