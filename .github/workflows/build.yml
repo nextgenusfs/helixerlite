@@ -94,7 +94,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: target/wheels/*.tar.gz
+          path: target/sdist/*.tar.gz
 
   test-artifacts:
     needs: [wheel-linux-x86_64, wheel-macos-x86_64, sdist]

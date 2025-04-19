@@ -27,14 +27,9 @@ python -m pip install helixerlite
 HelixerLite provides a simple command-line interface:
 
 ```bash
-# Convert FASTA to HDF5
-helixerlite fasta2hdf5 -i genome.fasta -o genome.h5
 
 # Run prediction
-helixerlite predict -m path/to/model -i genome.h5 -o predictions.h5
-
-# Convert predictions to GFF3
-helixerlite preds2gff3 -g genome.h5 -p predictions.h5 -o output.gff3
+helixerlite --fasta genome.fasta --lineage fungi --out output.gff3 
 ```
 
 ### Python API
