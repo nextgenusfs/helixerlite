@@ -134,12 +134,33 @@ jobs:
           name: sdist
           path: dist/
           merge-multiple: true
-      - name: Download wheel distributions
+      - name: Download Linux wheel distributions
         uses: actions/download-artifact@v4
         with:
-          pattern: wheels-*
+          name: wheels-linux-x86_64
           path: dist/
           merge-multiple: true
+
+      - name: Download MacOS x86_64 wheel distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-x86_64
+          path: dist/
+          merge-multiple: true
+
+      - name: Download MacOS aarch64 wheel distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-aarch64
+          path: dist/
+          merge-multiple: true
+
+      - name: Move wheel files to dist directory
+        run: |
+          # Find all wheel files in subdirectories and move them to dist/
+          find dist/ -name "*.whl" -type f -exec mv {} dist/ \;
+          # Remove empty directories
+          find dist/ -type d -empty -delete
       - name: List files in dist directory
         run: ls -la dist/
       - name: Publish distributions to PyPI
@@ -151,7 +172,7 @@ jobs:
     needs: upload
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
