@@ -7,14 +7,17 @@ on:
 
 jobs:
   wheel-linux-x86_64:
-    name: Build Linux wheels (x86-64)
+    name: Build Linux wheels (x86-64) for Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge
           channel-priority: strict
       - name: Install dependencies
@@ -31,18 +34,21 @@ jobs:
           maturin build --release --target x86_64-unknown-linux-gnu
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-linux-x86_64
+          name: wheels-linux-x86_64-py${{ matrix.python-version }}
           path: target/wheels/*.whl
 
   wheel-macos-x86_64:
-    name: Build MacOS wheels (x86-64)
+    name: Build MacOS wheels (x86-64) for Python ${{ matrix.python-version }}
     runs-on: macOS-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge
           channel-priority: strict
       - name: Install dependencies
@@ -57,18 +63,21 @@ jobs:
           maturin build --release
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-macos-x86_64
+          name: wheels-macos-x86_64-py${{ matrix.python-version }}
           path: target/wheels/*.whl
 
   wheel-macos-aarch64:
-    name: Build MacOS wheels (Aarch64)
+    name: Build MacOS wheels (Aarch64) for Python ${{ matrix.python-version }}
     runs-on: macOS-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge
           channel-priority: strict
       - name: Install dependencies
@@ -83,7 +92,7 @@ jobs:
           maturin build --release --target aarch64-apple-darwin
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-macos-aarch64
+          name: wheels-macos-aarch64-py${{ matrix.python-version }}
           path: target/wheels/*.whl
 
   sdist:
@@ -134,24 +143,69 @@ jobs:
           name: sdist
           path: dist/
           merge-multiple: true
-      - name: Download Linux wheel distributions
+      # Download Linux wheel distributions
+      - name: Download Linux wheel distributions (Python 3.9)
         uses: actions/download-artifact@v4
         with:
-          name: wheels-linux-x86_64
+          name: wheels-linux-x86_64-py3.9
           path: dist/
           merge-multiple: true
 
-      - name: Download MacOS x86_64 wheel distributions
+      - name: Download Linux wheel distributions (Python 3.10)
         uses: actions/download-artifact@v4
         with:
-          name: wheels-macos-x86_64
+          name: wheels-linux-x86_64-py3.10
           path: dist/
           merge-multiple: true
 
-      - name: Download MacOS aarch64 wheel distributions
+      - name: Download Linux wheel distributions (Python 3.11)
         uses: actions/download-artifact@v4
         with:
-          name: wheels-macos-aarch64
+          name: wheels-linux-x86_64-py3.11
+          path: dist/
+          merge-multiple: true
+
+      # Download MacOS x86_64 wheel distributions
+      - name: Download MacOS x86_64 wheel distributions (Python 3.9)
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-x86_64-py3.9
+          path: dist/
+          merge-multiple: true
+
+      - name: Download MacOS x86_64 wheel distributions (Python 3.10)
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-x86_64-py3.10
+          path: dist/
+          merge-multiple: true
+
+      - name: Download MacOS x86_64 wheel distributions (Python 3.11)
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-x86_64-py3.11
+          path: dist/
+          merge-multiple: true
+
+      # Download MacOS aarch64 wheel distributions
+      - name: Download MacOS aarch64 wheel distributions (Python 3.9)
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-aarch64-py3.9
+          path: dist/
+          merge-multiple: true
+
+      - name: Download MacOS aarch64 wheel distributions (Python 3.10)
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-aarch64-py3.10
+          path: dist/
+          merge-multiple: true
+
+      - name: Download MacOS aarch64 wheel distributions (Python 3.11)
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-aarch64-py3.11
           path: dist/
           merge-multiple: true
 
