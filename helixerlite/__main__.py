@@ -86,47 +86,52 @@ def main():
     logger.info(
         f"Using settings for {args.lineage}: --overlap-offset {lineage_config['offset']} --core-length {lineage_config['core']}"
     )
-    model = HybridModel(
-        [
-            "--load-model-path",
-            model_path,
-            "--test-data",
-            f"{slug}.h5",
-            "--overlap-offset",
-            str(lineage_config["offset"]),
-            "--core-length",
-            str(lineage_config["core"]),
-            "--overlap",
-            "--val-test-batch-size",
-            "32",
-            "--prediction-output-path",
-            f"{slug}.predictions.h5",
-            "--cpus",
-            str(args.cpus),
-        ]
-    )
+    model_cmd = [
+        "--load-model-path",
+        model_path,
+        "--test-data",
+        f"{slug}.h5",
+        "--overlap-offset",
+        str(lineage_config["offset"]),
+        "--core-length",
+        str(lineage_config["core"]),
+        "--overlap",
+        "--val-test-batch-size",
+        "32",
+        "--prediction-output-path",
+        f"{slug}.predictions.h5",
+        "--cpus",
+        str(args.cpus),
+    ]
+    logger.info(f"Running helixer HybridModel input: {model_cmd}")
+    model = HybridModel(model_cmd)
     model.run()
 
     # convert to GFF3
-    logger.info("Converting predictions.h5 to GFF3 with helixerpost")
-    preds2gff3(
-        f"{slug}.h5",
-        f"{slug}.predictions.h5",
-        f"{slug}.gff3",
-        peak_threshold=float(args.peak),
-        min_coding_length=args.minprotlen,
-    )
-    # clean/reformat gff
-    logger.info("Cleaning GFF3 output with GFFtk")
-    Genes = gff2dict(f"{slug}.gff3", args.fasta)
-    stats = annotation_stats(Genes)
-    dict2gff3(Genes, output=args.out)
-    logger.info(f"Annotation stats:\n{json.dumps(stats, indent=2)}")
+    if os.path.isfile(f"{slug}.predictions.h5"):
+        logger.info("Converting predictions.h5 to GFF3 with helixerpost")
+        preds2gff3(
+            f"{slug}.h5",
+            f"{slug}.predictions.h5",
+            f"{slug}.gff3",
+            peak_threshold=float(args.peak),
+            min_coding_length=args.minprotlen,
+        )
+        # clean/reformat gff
+        logger.info("Cleaning GFF3 output with GFFtk")
+        Genes = gff2dict(f"{slug}.gff3", args.fasta)
+        stats = annotation_stats(Genes)
+        dict2gff3(Genes, output=args.out)
+        logger.info(f"Annotation stats:\n{json.dumps(stats, indent=2)}")
 
-    # clean up
-    for f in [f"{slug}.h5", f"{slug}.predictions.h5", f"{slug}.gff3"]:
-        if os.path.isfile(f):
-            os.remove(f)
+        # clean up
+        for f in [f"{slug}.h5", f"{slug}.predictions.h5", f"{slug}.gff3"]:
+            if os.path.isfile(f):
+                os.remove(f)
+    else:
+        logger.error(
+            f"Helixer HybridModel prediction failed, no output file: {slug}.predictions.h5"
+        )
     # finish
     finishLogging(logger.info, vars(sys.modules[__name__])["__name__"])
 
