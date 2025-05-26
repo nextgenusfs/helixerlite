@@ -190,6 +190,7 @@ def parse_args(args):
         dest="minprotlen",
         required=False,
         default=60,
+        type="int",
         metavar="",
         help="Minimum length protein coding gene [amino acids]",
     )
