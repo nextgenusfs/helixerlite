@@ -103,7 +103,6 @@ def main():
         "--cpus",
         str(args.cpus),
     ]
-    logger.info(f"Running helixer HybridModel input: {model_cmd}")
     model = HybridModel(model_cmd)
     model.run()
 
@@ -132,6 +131,7 @@ def main():
         logger.error(
             f"Helixer HybridModel prediction failed, no output file: {slug}.predictions.h5"
         )
+        logger.error(f"Failed helixer HybridModel input: {model_cmd}")
     # finish
     finishLogging(logger.info, vars(sys.modules[__name__])["__name__"])
 
@@ -190,7 +190,7 @@ def parse_args(args):
         dest="minprotlen",
         required=False,
         default=60,
-        type="int",
+        type=int,
         metavar="",
         help="Minimum length protein coding gene [amino acids]",
     )
