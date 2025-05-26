@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "helixerlite"
-version = "25.4.19"
+version = "25.5.26"
 description = "helixerlite: simplified genome annotation with Helixer"
 readme = {file = "README.md", content-type = "text/markdown"}
 authors = [

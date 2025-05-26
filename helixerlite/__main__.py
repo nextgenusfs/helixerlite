@@ -27,9 +27,9 @@ def main():
             "offset": 10692,
             "core": 16038,
         },
-        "land_plants": {
+        "land_plant": {
             "url": "https://zenodo.org/records/10836346/files/land_plant_v0.3_a_0080.h5?download=1",
-            "name": "and_plant_v0.3_a_0080.h5",
+            "name": "land_plant_v0.3_a_0080.h5",
             "length": 54152,
             "offset": 32076,
             "core": 48114,
@@ -84,7 +84,7 @@ def main():
     # --load-model-path fungi_v0.3_a_0100.h5 --test-data 5f616493-e12d-4090-aace-df674baaafe3.h5 --overlap --val-test-batch-size 32
     logger.info(f"Running helixer HybridModel using model={lineage_config['name']}")
     logger.info(
-        f'Using settings for {args.lineage}: --overlap-offset {lineage_config["offset"]} --core-length {lineage_config["core"]}'
+        f"Using settings for {args.lineage}: --overlap-offset {lineage_config['offset']} --core-length {lineage_config['core']}"
     )
     model = HybridModel(
         [
