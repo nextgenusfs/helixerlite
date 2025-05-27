@@ -49,8 +49,6 @@ model = HybridModel(["--load-model-path", "path/to/model",
                      "--prediction-output-path", "predictions.h5"])
 model.run()
 
-# Convert predictions to GFF3
-preds2gff3("genome.h5", "predictions.h5", "output.gff3")
 ```
 
 ## Requirements
